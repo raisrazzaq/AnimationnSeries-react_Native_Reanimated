@@ -1,55 +1,59 @@
-import {View, Text, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import {
-  GestureHandlerRootView,
-  PanGestureHandler,
-} from 'react-native-gesture-handler';
+import {View, Text, ImageBackground, Dimensions, Image} from 'react-native';
+import React, {useCallback} from 'react';
 import Animated, {
-  useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
+  withDecay,
+  withDelay,
   withSpring,
-  withTiming,
 } from 'react-native-reanimated';
-
+import {
+  GestureHandlerRootView,
+  TapGestureHandler,
+} from 'react-native-gesture-handler';
 const App = () => {
-  const x = useSharedValue(0);
-  const y = useSharedValue(0);
-
-  const gestureHandler = useAnimatedGestureHandler({
-    onStart: (e, c) => {
-      c.StartX = x.value;
-      c.StartY = y.value;
-    },
-    onActive: (e, c) => {
-      x.value = c.StartX + e.translationX;
-      y.value = c.StartY + e.translationY;
-    },
-    onEnd: (e, c) => {
-      x.value = withTiming(0, {duration: 2000});
-      y.value = withTiming(0, {duration: 2000});
-    },
+  const ImageComponent = Animated.createAnimatedComponent(Image);
+  const scale = useSharedValue(0);
+  const doubleTap = useCallback(() => {
+    scale.value = withSpring(
+      1,
+      undefined,
+      isFinished => {
+        if (isFinished) {
+          scale.value = withDelay(100, withSpring(0));
+        }
+      },
+      [],
+    );
   });
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{translateX: x.value}, {translateY: y.value}],
+      transform: [{scale: Math.max(scale.value, 0)}],
     };
   });
-
   return (
-    <GestureHandlerRootView>
-      <View style={{flex: 1, marginTop: 50, marginLeft: 10}}>
-        <PanGestureHandler onGestureEvent={gestureHandler}>
-          <Animated.View
-            style={[
-              {
-                width: 100,
-                height: 100,
-                backgroundColor: 'pink',
-              },
-              animatedStyle,
-            ]}></Animated.View>
-        </PanGestureHandler>
+    <GestureHandlerRootView style={{flex: 1}}>
+      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <TapGestureHandler onActivated={doubleTap}>
+          <Animated.View>
+            <ImageBackground
+              source={require('./src/assets/night.jpg')}
+              style={{
+                width: Dimensions.get('window').width,
+                height: Dimensions.get('window').width,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              <ImageComponent
+                source={require('./src/assets/heart.png')}
+                style={[
+                  {width: 100, height: 100, tintColor: 'red'},
+                  animatedStyle,
+                ]}
+              />
+            </ImageBackground>
+          </Animated.View>
+        </TapGestureHandler>
       </View>
     </GestureHandlerRootView>
   );
