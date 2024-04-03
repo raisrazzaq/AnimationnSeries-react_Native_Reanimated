@@ -1,144 +1,198 @@
-import {View, Text, Image, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
+import {View, TouchableOpacity, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
-  withSequence,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
-
+const AnimatedBtn = Animated.createAnimatedComponent(TouchableOpacity);
 const App = () => {
-  const [count, setCount] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(0);
+  const animatedX = useSharedValue(0);
   const animatedY = useSharedValue(0);
-  const animateX = useSharedValue(0);
-  const scale = useSharedValue(0);
-  const scale2 = useSharedValue(0);
-  const [btnClicked, setBtnClicked] = useState(false);
 
+  const animated1Y = useSharedValue(0);
+  const animated2Y = useSharedValue(0);
+  const animated3Y = useSharedValue(0);
+  const animated4Y = useSharedValue(0);
+  useEffect(() => {
+    if (selectedTab == 0) {
+      animatedY.value = withTiming(50, {duration: 500});
+      setTimeout(() => {
+        animatedX.value = withTiming(0, {duration: 500});
+      }, 500);
+      setTimeout(() => {
+        animated1Y.value = withTiming(-100, {duration: 500});
+        animatedY.value = withTiming(-100, {duration: 500});
+        setTimeout(() => {
+          animated1Y.value = withTiming(0, {duration: 500});
+          animatedY.value = withTiming(0, {duration: 500});
+        }, 500);
+      }, 1000);
+    } else if (selectedTab == 1) {
+      animatedY.value = withTiming(50, {duration: 500});
+      setTimeout(() => {
+        animatedX.value = withTiming(100, {duration: 500});
+      }, 500);
+      setTimeout(() => {
+        animated2Y.value = withTiming(-100, {duration: 500});
+        animatedY.value = withTiming(-100, {duration: 500});
+        setTimeout(() => {
+          animated2Y.value = withTiming(0, {duration: 500});
+          animatedY.value = withTiming(0, {duration: 500});
+        }, 500);
+      }, 1000);
+    } else if (selectedTab == 2) {
+      animatedY.value = withTiming(50, {duration: 500});
+      setTimeout(() => {
+        animatedX.value = withTiming(200, {duration: 500});
+      }, 500);
+      setTimeout(() => {
+        animated3Y.value = withTiming(-100, {duration: 500});
+        animatedY.value = withTiming(-100, {duration: 500});
+        setTimeout(() => {
+          animated3Y.value = withTiming(0, {duration: 500});
+          animatedY.value = withTiming(0, {duration: 500});
+        }, 500);
+      }, 1000);
+    } else {
+      animatedY.value = withTiming(50, {duration: 500});
+      setTimeout(() => {
+        animatedX.value = withTiming(300, {duration: 500});
+      }, 500);
+      setTimeout(() => {
+        animated4Y.value = withTiming(-100, {duration: 500});
+        animatedY.value = withTiming(-100, {duration: 500});
+        setTimeout(() => {
+          animated4Y.value = withTiming(0, {duration: 500});
+          animatedY.value = withTiming(0, {duration: 500});
+        }, 500);
+      }, 1000);
+    }
+  }, [selectedTab]);
   const animatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [
-        {translateX: animateX.value},
-        {translateY: animatedY.value},
-        {scale: scale.value},
-      ],
+      transform: [{translateX: animatedX.value}, {translateY: animatedY.value}],
     };
   });
-  const animatedStyle2 = useAnimatedStyle(() => {
+  const animateBtnStyle1 = useAnimatedStyle(() => {
     return {
-      transform: [{scale: scale2.value}],
+      transform: [{translateY: animated1Y.value}],
+    };
+  });
+
+  const animateBtnStyle2 = useAnimatedStyle(() => {
+    return {
+      transform: [{translateY: animated2Y.value}],
+    };
+  });
+  const animateBtnStyle3 = useAnimatedStyle(() => {
+    return {
+      transform: [{translateY: animated3Y.value}],
+    };
+  });
+  const animateBtnStyle4 = useAnimatedStyle(() => {
+    return {
+      transform: [{translateY: animated4Y.value}],
     };
   });
   return (
-    <View style={{flex: 1}}>
-      <Image
-        source={require('./src/assets/sofa3.jpg')}
-        style={{height: 400, width: '100%'}}
-      />
-      <Text
-        style={{
-          fontSize: 20,
-          fontWeight: '500',
-          color: 'black',
-          marginTop: 10,
-          marginLeft: 10,
-        }}>
-        Comfy Sofa
-      </Text>
-      <Text style={{fontSize: 16, padding: 7}}>
-        Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odio dolore
-        voluptatum iste ipsam aperiam aspernatur minus voluptate temporibus
-        porro laboriosam eos voluptas, illo nam unde dolorem quam reprehenderit
-        recusandae? Distinctio pariatur commodi exercitationem quia. Lorem ipsum
-        dolor sit, amet consectetur adipisicing elit. Ex impedit repellendus
-        consectetur at sint facilis voluptatibus. Lorem ipsum dolor sit amet
-        consectetur adipisicing elit. Beatae magni quam optio ut vero soluta
-        obcaecati minus quae ipsum quisquam, cupiditate maiores distinctio.
-      </Text>
-      <Animated.View
-        style={[
-          {
-            height: 40,
-            width: 40,
-            borderRadius: 20,
-            backgroundColor: 'red',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignSelf: 'center',
-          },
-          animatedStyle,
-        ]}>
-        <Text style={{color: 'white', fontSize: 16}}>+1</Text>
-      </Animated.View>
-      <TouchableOpacity
-        disabled={btnClicked}
-        style={{
-          width: '90%',
-          height: 50,
-          backgroundColor: 'black',
-          alignSelf: 'center',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginTop: 20,
-          borderRadius: 10,
-        }}
-        onPress={() => {
-          if (animateX.value == 0) {
-            setBtnClicked(true);
-            scale.value = 1;
-            animateX.value = withTiming(150, {duration: 1500});
-            animatedY.value = withTiming(-620, {duration: 1500});
-            setTimeout(() => {
-              scale2.value = withSpring(1.5);
-              setCount(count + 1);
-              scale.value = 0;
-              animateX.value = withTiming(0, {duration: 1500});
-              animatedY.value = withTiming(0, {duration: 1500});
-              setTimeout(() => {
-                scale2.value = withSpring(1);
-                setBtnClicked(false);
-              }, 150);
-            }, 1500);
-          }
-        }}>
-        <Text style={{fontSize: 20, fontWeight: '500', color: 'white'}}>
-          Add To Cart
-        </Text>
-      </TouchableOpacity>
+    <View style={{flex: 1, backgroundColor: 'pink'}}>
       <View
         style={{
-          height: 70,
-          width: 70,
-          backgroundColor: 'white',
-          borderRadius: 35,
-          justifyContent: 'center',
-          alignItems: 'center',
+          width: '100%',
+          height: 80,
+          elevation: 5,
           position: 'absolute',
-          top: 15,
-          right: 15,
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          backgroundColor: 'white',
+          alignContent: 'center',
+          bottom: 0,
         }}>
-        <Image
-          source={require('./src/assets/bag.png')}
-          style={{width: 40, height: 40}}
-        />
         <Animated.View
           style={[
             {
-              width: 30,
-              height: 30,
-              backgroundColor: 'red',
-              borderRadius: 15,
+              width: 60,
+              height: 60,
+              borderRadius: 30,
+              backgroundColor: 'orange',
+              position: 'absolute',
+            },
+            animatedStyle,
+          ]}></Animated.View>
+        <AnimatedBtn
+          style={[
+            {
+              width: 60,
+              height: 60,
               justifyContent: 'center',
               alignItems: 'center',
-              position: 'absolute',
-              top: 0,
-              right: 0,
             },
-            animatedStyle2,
-          ]}>
-          <Text style={{color: 'white', fontSize: 16}}>{count}</Text>
-        </Animated.View>
+            animateBtnStyle1,
+          ]}
+          onPress={() => {
+            setSelectedTab(0);
+          }}>
+          <Image
+            source={require('./src/assets/home.png')}
+            style={{height: 40, width: 40}}
+          />
+        </AnimatedBtn>
+        <AnimatedBtn
+          style={[
+            {
+              width: 60,
+              height: 60,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+            animateBtnStyle2,
+          ]}
+          onPress={() => {
+            setSelectedTab(1);
+          }}>
+          <Image
+            source={require('./src/assets/cart.png')}
+            style={{height: 40, width: 40, tintColor: 'gray'}}
+          />
+        </AnimatedBtn>
+        <AnimatedBtn
+          style={[
+            {
+              width: 60,
+              height: 60,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+            animateBtnStyle3,
+          ]}
+          onPress={() => {
+            setSelectedTab(2);
+          }}>
+          <Image
+            source={require('./src/assets/favourite.png')}
+            style={{height: 40, width: 40, tintColor: 'gray'}}
+          />
+        </AnimatedBtn>
+        <AnimatedBtn
+          style={[
+            {
+              width: 60,
+              height: 60,
+              justifyContent: 'center',
+              alignItems: 'center',
+            },
+            animateBtnStyle4,
+          ]}
+          onPress={() => {
+            setSelectedTab(3);
+          }}>
+          <Image
+            source={require('./src/assets/profile.png')}
+            style={{height: 40, width: 40, tintColor: 'gray'}}
+          />
+        </AnimatedBtn>
       </View>
     </View>
   );
