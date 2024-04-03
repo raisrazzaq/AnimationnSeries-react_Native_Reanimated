@@ -1,198 +1,78 @@
-import {View, TouchableOpacity, Image} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import Animated, {
+import {View, Text, Image} from 'react-native';
+import React from 'react';
+import {
+  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-const AnimatedBtn = Animated.createAnimatedComponent(TouchableOpacity);
+import Animated from 'react-native-reanimated';
+
 const App = () => {
-  const [selectedTab, setSelectedTab] = useState(0);
-  const animatedX = useSharedValue(0);
-  const animatedY = useSharedValue(0);
-
-  const animated1Y = useSharedValue(0);
-  const animated2Y = useSharedValue(0);
-  const animated3Y = useSharedValue(0);
-  const animated4Y = useSharedValue(0);
-  useEffect(() => {
-    if (selectedTab == 0) {
-      animatedY.value = withTiming(50, {duration: 500});
-      setTimeout(() => {
-        animatedX.value = withTiming(0, {duration: 500});
-      }, 500);
-      setTimeout(() => {
-        animated1Y.value = withTiming(-100, {duration: 500});
-        animatedY.value = withTiming(-100, {duration: 500});
-        setTimeout(() => {
-          animated1Y.value = withTiming(0, {duration: 500});
-          animatedY.value = withTiming(0, {duration: 500});
-        }, 500);
-      }, 1000);
-    } else if (selectedTab == 1) {
-      animatedY.value = withTiming(50, {duration: 500});
-      setTimeout(() => {
-        animatedX.value = withTiming(100, {duration: 500});
-      }, 500);
-      setTimeout(() => {
-        animated2Y.value = withTiming(-100, {duration: 500});
-        animatedY.value = withTiming(-100, {duration: 500});
-        setTimeout(() => {
-          animated2Y.value = withTiming(0, {duration: 500});
-          animatedY.value = withTiming(0, {duration: 500});
-        }, 500);
-      }, 1000);
-    } else if (selectedTab == 2) {
-      animatedY.value = withTiming(50, {duration: 500});
-      setTimeout(() => {
-        animatedX.value = withTiming(200, {duration: 500});
-      }, 500);
-      setTimeout(() => {
-        animated3Y.value = withTiming(-100, {duration: 500});
-        animatedY.value = withTiming(-100, {duration: 500});
-        setTimeout(() => {
-          animated3Y.value = withTiming(0, {duration: 500});
-          animatedY.value = withTiming(0, {duration: 500});
-        }, 500);
-      }, 1000);
-    } else {
-      animatedY.value = withTiming(50, {duration: 500});
-      setTimeout(() => {
-        animatedX.value = withTiming(300, {duration: 500});
-      }, 500);
-      setTimeout(() => {
-        animated4Y.value = withTiming(-100, {duration: 500});
-        animatedY.value = withTiming(-100, {duration: 500});
-        setTimeout(() => {
-          animated4Y.value = withTiming(0, {duration: 500});
-          animatedY.value = withTiming(0, {duration: 500});
-        }, 500);
-      }, 1000);
-    }
-  }, [selectedTab]);
-  const animatedStyle = useAnimatedStyle(() => {
+  const spin = useSharedValue(0);
+  const frontStyle = useAnimatedStyle(() => {
+    const spinValue = interpolate(spin.value, [0, 1], [0, 180]);
     return {
-      transform: [{translateX: animatedX.value}, {translateY: animatedY.value}],
+      transform: [{rotateY: withTiming(`${spinValue}deg`)}],
     };
   });
-  const animateBtnStyle1 = useAnimatedStyle(() => {
+  const backStyle = useAnimatedStyle(() => {
+    const spinValue = interpolate(spin.value, [0, 1], [180, 360]);
     return {
-      transform: [{translateY: animated1Y.value}],
-    };
-  });
-
-  const animateBtnStyle2 = useAnimatedStyle(() => {
-    return {
-      transform: [{translateY: animated2Y.value}],
-    };
-  });
-  const animateBtnStyle3 = useAnimatedStyle(() => {
-    return {
-      transform: [{translateY: animated3Y.value}],
-    };
-  });
-  const animateBtnStyle4 = useAnimatedStyle(() => {
-    return {
-      transform: [{translateY: animated4Y.value}],
+      transform: [{rotateY: withTiming(`${spinValue}deg`)}],
     };
   });
   return (
-    <View style={{flex: 1, backgroundColor: 'pink'}}>
-      <View
-        style={{
-          width: '100%',
-          height: 80,
-          elevation: 5,
-          position: 'absolute',
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-          backgroundColor: 'white',
-          alignContent: 'center',
-          bottom: 0,
-        }}>
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <View>
         <Animated.View
           style={[
             {
-              width: 60,
-              height: 60,
-              borderRadius: 30,
-              backgroundColor: 'orange',
+              height: 400,
+              width: 250,
+              borderRadius: 16,
               position: 'absolute',
+              alignItems: 'center',
+              justifyContent: 'center',
             },
-            animatedStyle,
-          ]}></Animated.View>
-        <AnimatedBtn
+            frontStyle,
+          ]}>
+          <Image
+            source={require('./src/assets/night.jpg')}
+            style={{width: '100%', height: '100%', borderRadius: 10}}
+          />
+        </Animated.View>
+        <Animated.View
           style={[
             {
-              width: 60,
-              height: 60,
+              height: 400,
+              width: 250,
+              backgroundColor: '#FF8787',
+              borderRadius: 16,
+              alignItems: 'baseline',
               justifyContent: 'center',
-              alignItems: 'center',
+              backfaceVisibility: 'hidden',
             },
-            animateBtnStyle1,
-          ]}
-          onPress={() => {
-            setSelectedTab(0);
-          }}>
+            backStyle,
+          ]}>
           <Image
-            source={require('./src/assets/home.png')}
-            style={{height: 40, width: 40}}
+            source={require('./src/assets/sofa3.jpg')}
+            style={{width: '100%', height: '100%', borderRadius: 10}}
           />
-        </AnimatedBtn>
-        <AnimatedBtn
-          style={[
-            {
-              width: 60,
-              height: 60,
-              justifyContent: 'center',
-              alignItems: 'center',
-            },
-            animateBtnStyle2,
-          ]}
+        </Animated.View>
+        <Text
+          style={{
+            marginTop: 50,
+            borderWidth: 1,
+            padding: 10,
+            color: 'black',
+            borderRadius: 10,
+          }}
           onPress={() => {
-            setSelectedTab(1);
+            spin.value = spin.value == 0 ? 1 : 0;
           }}>
-          <Image
-            source={require('./src/assets/cart.png')}
-            style={{height: 40, width: 40, tintColor: 'gray'}}
-          />
-        </AnimatedBtn>
-        <AnimatedBtn
-          style={[
-            {
-              width: 60,
-              height: 60,
-              justifyContent: 'center',
-              alignItems: 'center',
-            },
-            animateBtnStyle3,
-          ]}
-          onPress={() => {
-            setSelectedTab(2);
-          }}>
-          <Image
-            source={require('./src/assets/favourite.png')}
-            style={{height: 40, width: 40, tintColor: 'gray'}}
-          />
-        </AnimatedBtn>
-        <AnimatedBtn
-          style={[
-            {
-              width: 60,
-              height: 60,
-              justifyContent: 'center',
-              alignItems: 'center',
-            },
-            animateBtnStyle4,
-          ]}
-          onPress={() => {
-            setSelectedTab(3);
-          }}>
-          <Image
-            source={require('./src/assets/profile.png')}
-            style={{height: 40, width: 40, tintColor: 'gray'}}
-          />
-        </AnimatedBtn>
+          Flip Card
+        </Text>
       </View>
     </View>
   );
