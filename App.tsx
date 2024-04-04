@@ -1,78 +1,90 @@
-import {View, Text, Image} from 'react-native';
+import {View, Text, TouchableOpacity, Image} from 'react-native';
 import React from 'react';
-import {
-  interpolate,
+import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import Animated from 'react-native-reanimated';
-
 const App = () => {
-  const spin = useSharedValue(0);
-  const frontStyle = useAnimatedStyle(() => {
-    const spinValue = interpolate(spin.value, [0, 1], [0, 180]);
+  const width = useSharedValue(0);
+  const yValue = useSharedValue(60);
+  const iconScale = useSharedValue(0);
+  const menuStyle = useAnimatedStyle(() => {
     return {
-      transform: [{rotateY: withTiming(`${spinValue}deg`)}],
+      width: width.value,
+      transform: [{translateY: yValue.value}],
     };
   });
-  const backStyle = useAnimatedStyle(() => {
-    const spinValue = interpolate(spin.value, [0, 1], [180, 360]);
+  const iconStyle = useAnimatedStyle(() => {
     return {
-      transform: [{rotateY: withTiming(`${spinValue}deg`)}],
+      transform: [{scale: iconScale.value}],
     };
   });
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <View>
+    <View
+      style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignContent: 'center',
+      }}>
+      <View style={{height: 50, width: '100%'}}>
         <Animated.View
           style={[
             {
-              height: 400,
-              width: 250,
-              borderRadius: 16,
-              position: 'absolute',
+              width: 300,
+              height: 70,
+              backgroundColor: 'black',
+              alignSelf: 'center',
+              borderRadius: 35,
+              flexDirection: 'row',
+              justifyContent: 'space-evenly',
               alignItems: 'center',
-              justifyContent: 'center',
             },
-            frontStyle,
+            menuStyle,
           ]}>
-          <Image
-            source={require('./src/assets/night.jpg')}
-            style={{width: '100%', height: '100%', borderRadius: 10}}
+          <Animated.Image
+            source={require('./src/assets/home.png')}
+            style={[{width: 30, height: 30, tintColor: 'white'}, iconStyle]}
+          />
+          <Animated.Image
+            source={require('./src/assets/cart.png')}
+            style={[{width: 30, height: 30, tintColor: 'white'}, iconStyle]}
+          />
+          <Animated.Image
+            source={require('./src/assets/favourite.png')}
+            style={[{width: 30, height: 30, tintColor: 'white'}, iconStyle]}
+          />
+          <Animated.Image
+            source={require('./src/assets/profile.png')}
+            style={[{width: 30, height: 30, tintColor: 'white'}, iconStyle]}
           />
         </Animated.View>
-        <Animated.View
-          style={[
-            {
-              height: 400,
-              width: 250,
-              backgroundColor: '#FF8787',
-              borderRadius: 16,
-              alignItems: 'baseline',
-              justifyContent: 'center',
-              backfaceVisibility: 'hidden',
-            },
-            backStyle,
-          ]}>
-          <Image
-            source={require('./src/assets/sofa3.jpg')}
-            style={{width: '100%', height: '100%', borderRadius: 10}}
-          />
-        </Animated.View>
-        <Text
+        <TouchableOpacity
           style={{
-            marginTop: 50,
-            borderWidth: 1,
-            padding: 10,
-            color: 'black',
-            borderRadius: 10,
+            width: 70,
+            height: 70,
+            borderRadius: 35,
+            backgroundColor: 'black',
+            alignSelf: 'center',
+            justifyContent: 'center',
+            alignItems: 'center',
           }}
           onPress={() => {
-            spin.value = spin.value == 0 ? 1 : 0;
+            if (width.value == 0) {
+              width.value = withTiming(300, {duration: 300});
+              yValue.value = withTiming(-50, {duration: 300});
+              iconScale.value = withTiming(1, {duration: 400});
+            } else {
+              yValue.value = withTiming(0, {duration: 100});
+              width.value = withTiming(0, {duration: 300});
+              yValue.value = withTiming(70, {duration: 300});
+            }
           }}>
-          Flip Card
-        </Text>
+          <Image
+            source={require('./src/assets/upload.png')}
+            style={{width: 30, height: 30, tintColor: 'white'}}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   );
