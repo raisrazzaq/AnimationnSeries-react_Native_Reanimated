@@ -14,6 +14,9 @@ const Map = () => {
             latitudeDelta: 0.02,
             longitudeDelta: 0.02,
           }}
+          onRegionChange={x => {
+            console.log(x);
+          }}
         />
       </View>
     </SafeAreaView>
